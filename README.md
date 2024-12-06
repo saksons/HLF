@@ -30,6 +30,6 @@ peer channel join -b channel-artifacts/test-net-genesis.block
 ```
 
 # Установка чейнкода, мониторинга и 3 организации
-[Установка чейнкода](./chaincode/README.md)  
-[Установка мониторинга](./monitoring/README.md)  
-[Добавление 3 организации в канал](./addOrg3/README.md)
+[Установка чейнкода](./chaincode)  
+[Установка мониторинга](./monitoring)  
+[Добавление 3 организации в канал](./addOrg3)
