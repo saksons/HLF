@@ -36,9 +36,13 @@ services:
       - ORDERER_ADMIN_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_TLS_CLIENTROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
       - ORDERER_ADMIN_LISTENADDRESS=0.0.0.0:7054
+      - ORDERER_METRICS_PROVIDER=prometheus
+      - ORDERER_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - ORDERER_OPERATIONS_TLS_ENABLED=false
     ports:
       - 7050:7050
       - 7054:7054
+      - 9050:8443
     networks:
       fabric-test-net:
         aliases:
@@ -64,6 +68,9 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org1.test.net:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - CORE_OPERATIONS_TLS_ENABLED=false
     volumes:
       - ./organizations/peerOrganizations/org1.test.net/peers/peer0.org1.test.net/msp:/etc/hyperledger/fabric/msp
       - ./organizations/peerOrganizations/org1.test.net/peers/peer0.org1.test.net/tls:/etc/hyperledger/fabric/tls
@@ -72,6 +79,7 @@ services:
     command: peer node start
     ports:
       - 7051:7051
+      - 9051:8443
     networks:
       fabric-test-net:
         aliases:
@@ -97,6 +105,9 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org2.test.net:7052
       - CORE_PEER_LOCALMSPID=Org2MSP
       - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - CORE_OPERATIONS_TLS_ENABLED=false
     volumes:
       - ./organizations/peerOrganizations/org2.test.net/peers/peer0.org2.test.net/msp:/etc/hyperledger/fabric/msp
       - ./organizations/peerOrganizations/org2.test.net/peers/peer0.org2.test.net/tls:/etc/hyperledger/fabric/tls
@@ -105,6 +116,7 @@ services:
     command: peer node start
     ports:
       - 7052:7052
+      - 9052:8443
     networks:
       fabric-test-net:
         aliases:

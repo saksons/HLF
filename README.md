@@ -1,14 +1,14 @@
 # Поднятие канала и добавление участников
 ## Создание сертификатов и первого блока
 ```bash
-./fabric/bin/cryptogen generate --config=./configs/crypto-config-org1_2.yaml --output="organizations"
+./fabric/bin/cryptogen generate --config=./crypto-config.yaml --output="organizations"
 
-./fabric/bin/configtxgen -profile TestChannel -outputBlock ./channel-artifacts/test-net-genesis.block -channelID test-net -configPath ./configs/configtx-org1_2.yaml
+./fabric/bin/configtxgen -profile TestChannel -outputBlock ./channel-artifacts/test-net-genesis.block -channelID test-net
 ```
 
 ## Поднятие контейнеров orderer, peer0.org1, peer0.org2, cli-org1_2
 ```bash
-docker-compose up -d -f compose docker-compose-org1_2.yaml
+docker-compose up -d
 ```
 
 ## Присоединение участников к каналу

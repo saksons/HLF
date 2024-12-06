@@ -13,8 +13,10 @@ Organizations:
       Admins:
           Type: Signature
           Rule: "OR('OrdererMSP.admin')"
+    OrdererEndpoints:
+      - orderer.test.net:7050
   - &Org1
-    Name: Org1MSP
+    Name: Org1
     ID: Org1MSP
     MSPDir: ./organizations/peerOrganizations/org1.test.net/msp
     Policies:
@@ -27,12 +29,15 @@ Organizations:
         Admins:
             Type: Signature
             Rule: "OR('Org1MSP.admin')"
+        Endorsement:
+            Type: Signature
+            Rule: "OR('Org1MSP.peer')"
 
     AnchorPeers:
         - Host: peer0.org1.test.net
           Port: 7051
   - &Org2
-    Name: Org2MSP
+    Name: Org2
     ID: Org2MSP
     MSPDir: ./organizations/peerOrganizations/org2.test.net/msp
     Policies:
@@ -45,6 +50,9 @@ Organizations:
         Admins:
             Type: Signature
             Rule: "OR('Org2MSP.admin')"
+        Endorsement:
+            Type: Signature
+            Rule: "OR('Org2MSP.peer')"
     AnchorPeers:
         - Host: peer0.org2.test.net
           Port: 7052
@@ -56,7 +64,7 @@ Capabilities:
     Orderer: &OrdererCapabilities
         V2_0: true
     Application: &ApplicationCapabilities
-        V2_0: true
+        V2_5: true
 
 
 Application: &ApplicationDefaults
@@ -71,6 +79,12 @@ Application: &ApplicationDefaults
         Admins:
             Type: ImplicitMeta
             Rule: "MAJORITY Admins"
+        LifecycleEndorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
+        Endorsement:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Endorsement"
     Capabilities:
         <<: *ApplicationCapabilities
 
