@@ -1,0 +1,23 @@
+networks:
+  fabric-test-net:
+    name: fabric-test-net
+    external: true
+
+services:
+  chaincode:
+    container_name: chaincode.test.net
+    image: ${CHAINCODE_IMAGE}
+    restart: always
+    environment:
+      CHAINCODE_SERVER_ADDRESS: 0.0.0.0:8050
+      CHAINCODE_ID: test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf
+      CORE_CHAINCODE_ID_NAME: test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf
+      CORE_CHAINCODE_ADDRESS: 0.0.0.0:8050
+      CHAINCODE_TLS_DISABLED: 'true'
+      CORE_PEER_TLS_ENABLED: 'false'
+    ports:
+      - 8050:8050
+    networks:
+      fabric-test-net:
+        aliases:
+          - chaincode.test.net
