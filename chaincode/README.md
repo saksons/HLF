@@ -48,7 +48,7 @@ peer lifecycle chaincode install test-chaincode.tar.gz
 peer lifecycle chaincode queryinstalled --output json
 ```
 
-## Апрув чейнкода на пирах
+## Апрув чейнкода на peer0.org1.test.net
 ```bash
 CORE_PEER_ADDRESS=peer0.org1.test.net:7051
 CORE_PEER_LOCALMSPID=Org1MSP
@@ -57,9 +57,26 @@ CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organi
 CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org1.test.net/peers/peer0.org1.test.net/tls/ca.crt
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org1.test.net/users/Admin@org1.test.net/msp
 
-peer lifecycle chaincode approveformyorg -o orderer.test.net:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem --channelID test-net --name test-chaincode --version 1.0 --package-id test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf --sequence 1
-peer lifecycle chaincode checkcommitreadiness --channelID test-net --name test-chaincode --version 1.0 --sequence 1 --output json
+peer lifecycle chaincode approveformyorg \
+-o orderer.test.net:7050 \
+--tls \
+--cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem \
+--channelID test-net \
+--name test-chaincode \
+--version 1.0 \
+--package-id test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf \
+--sequence 1
 
+peer lifecycle chaincode checkcommitreadiness \
+--channelID test-net \
+--name test-chaincode \
+--version 1.0 \
+--sequence 1 \
+--output json
+```
+
+## Апрув чейнкода на peer0.org2.test.net
+```bash
 CORE_PEER_ADDRESS=peer0.org2.test.net:7052
 CORE_PEER_LOCALMSPID=Org2MSP
 CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org2.test.net/peers/peer0.org2.test.net/tls/server.crt
@@ -67,13 +84,38 @@ CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organi
 CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org2.test.net/peers/peer0.org2.test.net/tls/ca.crt
 CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org2.test.net/users/Admin@org2.test.net/msp
 
-peer lifecycle chaincode approveformyorg -o orderer.test.net:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem --channelID test-net --name test-chaincode --version 1.0 --package-id test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf --sequence 1
-peer lifecycle chaincode checkcommitreadiness --channelID test-net --name test-chaincode --version 1.0 --sequence 1 --output json
+peer lifecycle chaincode approveformyorg \
+-o orderer.test.net:7050 \
+--tls \
+--cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem \
+--channelID test-net \
+--name test-chaincode \
+--version 1.0 \
+--package-id test-chaincode:9614bff32959aca7f253aea3e075f44983f09fcb568ea863346bda61597e11bf \
+--sequence 1
+
+peer lifecycle chaincode checkcommitreadiness \
+--channelID test-net \
+--name test-chaincode \
+--version 1.0 \
+--sequence 1 \
+--output json
 ```
 
 ## Коммит чейнкода на пиры
 ```bash
-peer lifecycle chaincode commit -o orderer.test.net:7050 --tls --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem --channelID test-net --name test-chaincode --peerAddresses peer0.org1.test.net:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org1.test.net/tlsca/tlsca.org1.test.net-cert.pem --peerAddresses peer0.org2.test.net:7052 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org2.test.net/tlsca/tlsca.org2.test.net-cert.pem --version 1.0 --sequence 1
+peer lifecycle chaincode commit \
+-o orderer.test.net:7050 \
+--tls \
+--cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/ordererOrganizations/test.net/tlsca/tlsca.test.net-cert.pem \
+--channelID test-net \
+--name test-chaincode \
+--peerAddresses peer0.org1.test.net:7051 \
+--tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org1.test.net/tlsca/tlsca.org1.test.net-cert.pem \
+--peerAddresses peer0.org2.test.net:7052 \
+--tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org2.test.net/tlsca/tlsca.org2.test.net-cert.pem \
+--version 1.0 \
+--sequence 1
 
 peer lifecycle chaincode querycommitted --channelID test-net --name test-chaincode
 ```
@@ -124,7 +166,12 @@ export PEER0_ORG2_CA=/home/soks/test/organizations/peerOrganizations/org2.test.n
 -c '{"Args":["Register", "{\"id\":\"247b7923-d57f-45e6-bbc4-7c8e44397511\",\"number\":\"8889\",\"organization_id\":\"1dc22d90-ee76-4774-9394-bcf5808a0240\",\"retrust\":true, \"reg_date\":\"15.01.2023\",\"xml_data\":\"ZWjb2RlZCB4bWwgZGF0YSBleGFtcGxl\",\"xml_hash\":\"f948bf53d294de59ca3cd8a9bd33849b1c254184af4feaabbca04473307a11b\"}"]}'
 ```
 
-## Чтение данных
+## Чтение данных из контейнера cli
+```bash
+peer chaincode query -C test-net -n test-chaincode -c '{"Args":["GetByNumber", "8888"]}'
+```
+
+## Чтение данных из хоста
 ```bash
 ../bin/peer chaincode query -C test-net -n test-chaincode -c '{"Args":["GetByNumber", "8889"]}'
 ```
