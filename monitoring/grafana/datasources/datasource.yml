@@ -1,0 +1,12 @@
+# Configuration file version
+apiVersion: 1
+
+datasources:
+  - name: Graphite
+    type: graphite
+    access: proxy
+    orgId: 1
+    uid: prometheus-datasource
+    url: http://prometheus.test.net:9090
+    version: 1
+    editable: true

@@ -1,0 +1,66 @@
+version: '3'
+
+networks:
+  net:
+    external:
+      name: afscnet
+
+services:
+  vmagent:
+    container_name: vmagent
+    image: victoriametrics/vmagent:v1.101.0
+    ports:
+      - 8429:8429
+    volumes:
+      - vmagentdata:/vmagentdata
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+      - "--remoteWrite.url=https://metrics.monitoring.procsy.ru/api/v1/write"
+      - "--remoteWrite.basicAuth.username=admin"
+      - "--remoteWrite.basicAuth.password=Пароль"
+
+    networks:
+      net:
+
+
+  prometheus-node-exporter:
+    image: prom/node-exporter
+    restart: always
+    container_name: node
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /:/host:ro,rslave
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    networks:
+      net:
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    restart: always
+    container_name: cadvisor
+    devices:
+      - "/dev/kmsg:/dev/kmsg"
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    networks:
+      net:
+
+volumes:
+  vmagentdata:
+
