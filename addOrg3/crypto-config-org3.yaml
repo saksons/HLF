@@ -1,0 +1,11 @@
+PeerOrgs:
+  - Name: Org3
+    Domain: org3.test.net
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+      SANS:
+        - localhost
+        - peer0.org3.test.net
+    Users:
+      Count: 1
