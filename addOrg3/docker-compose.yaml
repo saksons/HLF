@@ -1,0 +1,76 @@
+networks:
+  fabric-test-net:
+    name: fabric-test-net
+    external: true
+
+volumes:
+  peer0.org3.test.net:
+
+services:
+  peer0.org3.test.net:
+    container_name: peer0.org3.test.net
+    image: hyperledger/fabric-peer:latest
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric
+      - FABRIC_LOGGING_SPEC=INFO
+      #- FABRIC_LOGGING_SPEC=DEBUG
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/etc/hyperledger/fabric/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/etc/hyperledger/fabric/tls/ca.crt
+      - CORE_PEER_ID=peer0.org3.test.net
+      - CORE_PEER_ADDRESS=peer0.org3.test.net:7053
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:7053
+      # - CORE_PEER_CHAINCODEADDRESS=peer0.org3.test.net:7070
+      # - CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:7070
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.org3.test.net:7053
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.org3.test.net:7053
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp
+      - CORE_METRICS_PROVIDER=prometheus
+      - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:8443
+      - CORE_OPERATIONS_TLS_ENABLED=false
+    volumes:
+      - ../organizations/peerOrganizations/org3.test.net/peers/peer0.org3.test.net/msp:/etc/hyperledger/fabric/msp
+      - ../organizations/peerOrganizations/org3.test.net/peers/peer0.org3.test.net/tls:/etc/hyperledger/fabric/tls
+
+      - peer0.org3.test.net:/var/hyperledger
+    working_dir: /root
+    command: peer node start
+    ports:
+      - 7053:7053
+      - 9053:8443
+    networks:
+      fabric-test-net:
+        aliases:
+          - peer0.org3.test.net
+
+  cli-org3:
+    container_name: cli-org3.test.net
+    image: hyperledger/fabric-tools:latest
+    tty: true
+    stdin_open: true
+    environment:
+      - SYS_CHANNEL=$SYS_CHANNEL
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=INFO
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ADDRESS=peer0.org3.test.net:7053
+      - CORE_PEER_LOCALMSPID=Org3MSP
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org3.test.net/peers/peer0.org3.test.net/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org3.test.net/peers/peer0.org3.test.net/tls/server.key
+      - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org3.test.net/peers/peer0.org3.test.net/tls/ca.crt
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/peerOrganizations/org3.test.net/users/Admin@org3.test.net/msp
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    command: /bin/bash
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../organizations:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations/
+    depends_on:
+      - peer0.org3.test.net
+    networks:
+      fabric-test-net:
+        aliases:
+          - cli-org3.test.net
