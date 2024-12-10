@@ -2,11 +2,11 @@
 apiVersion: 1
 
 datasources:
-  - name: Graphite
-    type: graphite
+  - name: Prometheus
+    type: prometheus
     access: proxy
     orgId: 1
     uid: prometheus-datasource
-    url: http://prometheus.test.net:9090
+    url: http://prometheus.monitoring.test.net:9090
     version: 1
     editable: true

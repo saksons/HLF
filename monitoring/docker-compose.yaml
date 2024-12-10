@@ -1,33 +1,50 @@
-version: '3'
-
 networks:
-  net:
-    external:
-      name: afscnet
+  fabric-test-net:
+    name: fabric-test-net
+    external: true
+
+volumes:
+  prom-data:
 
 services:
-  vmagent:
-    container_name: vmagent
-    image: victoriametrics/vmagent:v1.101.0
-    ports:
-      - 8429:8429
-    volumes:
-      - vmagentdata:/vmagentdata
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - "--promscrape.config=/etc/prometheus/prometheus.yml"
-      - "--remoteWrite.url=https://metrics.monitoring.procsy.ru/api/v1/write"
-      - "--remoteWrite.basicAuth.username=admin"
-      - "--remoteWrite.basicAuth.password=Пароль"
-
-    networks:
-      net:
-
-
-  prometheus-node-exporter:
-    image: prom/node-exporter
+  grafana:
+    image: grafana/grafana
+    container_name: grafana.test.net
     restart: always
-    container_name: node
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    networks:
+      fabric-test-net:
+        aliases:
+          - grafana.monitoring.test.net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus.test.net
+    restart: always
+    ports:
+      - 9090:9090
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prom-data:/prometheus
+    depends_on:
+      - node-exporter
+      - cadvisor
+    networks:
+      fabric-test-net:
+        aliases:
+          - prometheus.monitoring.test.net
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node.test.net
+    restart: always
     ports:
       - "9100:9100"
     volumes:
@@ -42,12 +59,14 @@ services:
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
-      net:
+      fabric-test-net:
+        aliases:
+          - node-exporter.monitoring.test.net
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor.test.net
     restart: always
-    container_name: cadvisor
     devices:
       - "/dev/kmsg:/dev/kmsg"
     ports:
@@ -59,8 +78,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     networks:
-      net:
-
-volumes:
-  vmagentdata:
+      fabric-test-net:
+        aliases:
+          - cadvisor.monitoring.test.net
 
